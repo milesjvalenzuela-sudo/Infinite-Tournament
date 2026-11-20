@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SiteNav } from "./site-nav";
 
 export const metadata: Metadata = {
   title: "The Infinite Tournament",
-  description: "A community-run tournament of original characters.",
+  description: "Original characters. Writer-crafted battles. Public voting decides canon.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
+  return <html lang="en"><body><SiteNav />{children}</body></html>;
 }

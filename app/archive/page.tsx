@@ -1,0 +1,4 @@
+ "use client";
+import {useEffect,useState} from "react";import {supabase} from "@/lib/supabase";
+export default function Archive(){const [items,setItems]=useState<any[]>([]);const [msg,setMsg]=useState("Loading canon archive…");useEffect(()=>{(async()=>{const {data,error}=await supabase.from("canon_archive").select("*").order("created_at",{ascending:false});if(error){setMsg(error.message);return}setItems(data||[]);setMsg(data?.length?"":"No canon battles have been archived yet.");})();},[]);
+return <main className="shell page"><p className="eyebrow">THE OFFICIAL RECORD</p><h1>Canon archive</h1><p className="muted">The winning stories that shape tournament history.</p>{msg&&<p className="notice">{msg}</p>}{items.map(x=><article className="panel archive" key={x.id}><p className="muted tiny">{new Date(x.created_at).toLocaleDateString()}</p><h2>{x.title||"Canon battle"}</h2><p className="story">{x.story_text||x.content||"Archived result."}</p></article>)}</main>}
