@@ -21,3 +21,31 @@ Push the project to GitHub, then import/update the project in Vercel. Configure:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 Never put a Supabase secret/service-role key in browser code or a `NEXT_PUBLIC_` variable.
+
+## Automatic matchmaking (Version 3 update)
+
+After the original `supabase/TOURNAMENT_MIGRATION.sql` has been run, run
+`supabase/AUTO_MATCHMAKING_MIGRATION.sql` in the Supabase SQL Editor. It installs
+an hourly scheduled check that creates a new Winners Bracket round when at least
+two undefeated characters are eligible, or an Elimination Bracket round when at
+least two one-loss characters are eligible. It waits until all existing matches
+are closed and at least three days have passed since the previous round. Pairings
+prefer opponents who have not faced each other before. If the eligible count is
+odd, one character sits out.
+
+This is an automatic matchmaking foundation, not a complete implementation of
+the grand-final reset or every double-elimination edge case. Admins still review
+and close matches. The Supabase project must have the `pg_cron` extension available.
+
+## Make your account an administrator
+
+After signing up, run this once in Supabase SQL Editor, replacing the email with
+the exact email used for your tournament account:
+
+```sql
+update public.profiles
+set role = 'admin'
+where id = (select id from auth.users where email = 'YOUR_EMAIL_ADDRESS');
+```
+
+Then sign out and sign back in, and visit `/admin` on your deployed website.
