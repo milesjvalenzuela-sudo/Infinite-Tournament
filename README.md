@@ -49,3 +49,7 @@ where id = (select id from auth.users where email = 'YOUR_EMAIL_ADDRESS');
 ```
 
 Then sign out and sign back in, and visit `/admin` on your deployed website.
+
+
+## V5: Free signup without confirmation emails
+See `README_V5_FREE_SIGNUP.txt`. This requires turning off Supabase Email confirmation in the dashboard. No SQL migration is needed. Disabling confirmation means email addresses are not verified.
