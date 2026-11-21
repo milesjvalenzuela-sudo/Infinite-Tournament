@@ -40,21 +40,21 @@ begin
 
   -- Prefer the Winners Bracket while at least two undefeated characters remain.
   select count(*) into total from public.characters
-  where status = 'active' and coalesce(losses, 0) = 0;
+  where status = 'active' and coalesce(losses, 0) = 0 and coalesce(selected_for_tournament, false) = true;
   if total >= 2 then
     stage := 'winners';
     select array_agg(id order by random()) into eligible
-    from public.characters where status = 'active' and coalesce(losses, 0) = 0;
+    from public.characters where status = 'active' and coalesce(losses, 0) = 0 and coalesce(selected_for_tournament, false) = true;
   else
     -- Once fewer than two undefeated characters remain, pair one-loss characters.
     select count(*) into total from public.characters
-    where status = 'active' and coalesce(losses, 0) = 1;
+    where status = 'active' and coalesce(losses, 0) = 1 and coalesce(selected_for_tournament, false) = true;
     if total < 2 then
       return null;
     end if;
     stage := 'elimination';
     select array_agg(id order by random()) into eligible
-    from public.characters where status = 'active' and coalesce(losses, 0) = 1;
+    from public.characters where status = 'active' and coalesce(losses, 0) = 1 and coalesce(selected_for_tournament, false) = true;
   end if;
 
   if coalesce(array_length(eligible, 1), 0) < 2 then

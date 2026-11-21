@@ -136,11 +136,11 @@ begin
   insert into public.tournament_rounds(round_number,bracket_stage,status,starts_at)
   values(next_num,p_bracket_stage,'open',now()) returning id into new_round;
   if p_bracket_stage='winners' then
-    select array_agg(id order by random()) into eligible from public.characters where status='active' and coalesce(losses,0)=0;
+    select array_agg(id order by random()) into eligible from public.characters where status='active' and coalesce(losses,0)=0 and coalesce(selected_for_tournament,false)=true;
   elsif p_bracket_stage='elimination' then
-    select array_agg(id order by random()) into eligible from public.characters where status='active' and coalesce(losses,0)=1;
+    select array_agg(id order by random()) into eligible from public.characters where status='active' and coalesce(losses,0)=1 and coalesce(selected_for_tournament,false)=true;
   else
-    select array_agg(id order by random()) into eligible from public.characters where status='active' and coalesce(losses,0)<=1;
+    select array_agg(id order by random()) into eligible from public.characters where status='active' and coalesce(losses,0)<=1 and coalesce(selected_for_tournament,false)=true;
   end if;
   total:=coalesce(array_length(eligible,1),0);
   if total<2 then raise exception 'Not enough eligible characters to create this round.'; end if;
