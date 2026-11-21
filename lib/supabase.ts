@@ -11,5 +11,14 @@ export async function currentUser() {
 }
 
 export function friendlyError(error: unknown) {
-  return error instanceof Error ? error.message : "Something went wrong. Please try again.";
+  if (error instanceof Error) return error.message;
+  if (error && typeof error === "object") {
+    const e = error as { message?: unknown; details?: unknown; hint?: unknown; code?: unknown };
+    const message = typeof e.message === "string" ? e.message : "Database request failed.";
+    const details = typeof e.details === "string" && e.details ? `\nDetails: ${e.details}` : "";
+    const hint = typeof e.hint === "string" && e.hint ? `\nHint: ${e.hint}` : "";
+    const code = typeof e.code === "string" && e.code ? `\nCode: ${e.code}` : "";
+    return `${message}${details}${hint}${code}`;
+  }
+  return "Something went wrong. Please try again.";
 }

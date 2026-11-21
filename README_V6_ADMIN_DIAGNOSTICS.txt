@@ -1,0 +1,1 @@
+V6 admin diagnostics update\n\nThis update does not change tournament rules or database schema. It fixes error display so Supabase/PostgREST errors show their actual message, details, hint, and code instead of the generic message.\n\nIf match generation still fails, copy the full error shown on /admin and share it for diagnosis. Do not share service-role keys or passwords.\n
