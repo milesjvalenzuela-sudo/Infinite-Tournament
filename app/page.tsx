@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TournamentCountdown from "./tournament-countdown";
 
 export default function Home() {
   return <main className="shell">
@@ -9,6 +10,7 @@ export default function Home() {
       <div className="actions"><Link className="button primary" href="/account">Enter the tournament</Link><Link className="button secondary" href="/brackets">View brackets</Link></div>
       <div className="hero-mark">IT</div>
     </section>
+    <section className="section"><TournamentCountdown /></section>
     <section className="section" id="how">
       <p className="eyebrow">HOW THE TOURNAMENT WORKS</p>
       <div className="grid four">

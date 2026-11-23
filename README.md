@@ -53,3 +53,6 @@ Then sign out and sign back in, and visit `/admin` on your deployed website.
 
 ## V5: Free signup without confirmation emails
 See `README_V5_FREE_SIGNUP.txt`. This requires turning off Supabase Email confirmation in the dashboard. No SQL migration is needed. Disabling confirmation means email addresses are not verified.
+
+## V8 tournament clock and results
+After applying the V7 migrations and the database compatibility fixes for your project, run `supabase/TOURNAMENT_CLOCK_AND_RESULTS_MIGRATION.sql` in Supabase SQL Editor. See `README_V8_CLOCK_AND_RESULTS.txt` for deployment steps and behavior notes.

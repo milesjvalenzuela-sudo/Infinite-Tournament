@@ -113,6 +113,7 @@ export default function MatchPage() {
       <p className="eyebrow">MATCHUP</p>
       <h1>{match.a_name || "Character A"} <em>vs.</em> {match.b_name || "Character B"}</h1>
       <p className="muted">Stage: {match.bracket_stage || "Tournament"} · Status: {match.status}</p>
+      {match.status === "closed" && <section className="panel"><h2>Match closed</h2><p><strong>{match.winner_character_id === match.character_a_id ? match.a_name : match.b_name}</strong> won this matchup.</p><p className="muted tiny">{match.result_method === "coin_flip" ? "Both writers submitted and no votes were cast. The winner was selected by a 50/50 coin flip." : match.result_method === "single_submission" ? "Automatic win: only one writer submitted a story." : "The result was decided by public vote."}</p><Link href="/archive">View the canon archive</Link></section>}
 
       <section className="panel">
         <h2>Submit your version of the fight</h2>
