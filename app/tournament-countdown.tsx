@@ -27,7 +27,7 @@ export default function TournamentCountdown() {
         return;
       }
       const [{ data: active, error: activeError }, { data: rounds, error: roundsError }] = await Promise.all([
-        supabase.from("matches").select("id,closes_at,status").eq("tournament_id", state.current_tournament_id).neq("status", "closed").not("closes_at", "is", null).order("closes_at", { ascending: true }).limit(1),
+        supabase.from("matches").select("id,closes_at,status").eq("tournament_id", state.current_tournament_id).in("status", ["scheduled", "open", "writing", "voting"]).not("closes_at", "is", null).order("closes_at", { ascending: true }).limit(1),
         supabase.from("tournament_rounds").select("starts_at,round_number").eq("tournament_id", state.current_tournament_id).order("round_number", { ascending: false }).limit(1),
       ]);
       if (!alive) return;

@@ -1,7 +1,7 @@
 INFINITE TOURNAMENT V8 - COUNTDOWN, RESULTS, AND CLOSED-MATCH HANDLING
 
 WHAT CHANGED
-- The active Matchups page now hides closed matches.
+- The active Matchups page, Brackets page, and admin active-match list show only scheduled/open/writing/voting matches. Closed/completed matches disappear from active views and direct matchup links show an inactive notice; canon archive records remain preserved.
 - Closed matches remain in the bracket history and their winning story remains in the canon archive.
 - Admins can create the opening bracket from the Admin page.
 - A three-day countdown is shown on the home page, bracket page, and admin page.

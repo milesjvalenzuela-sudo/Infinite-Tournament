@@ -106,6 +106,7 @@ export default function MatchPage() {
 
   if (loading && !match) return <main className="shell page"><p>{message}</p></main>;
   if (!match) return <main className="shell page"><p className="notice">{message || "Matchup not found."}</p><Link href="/matches">Back to matchups</Link></main>;
+  if (!["scheduled", "open", "writing", "voting"].includes(match.status)) return <main className="shell page"><p className="eyebrow">THE ARENA</p><h1>This matchup is no longer active</h1><p className="muted">Closed and completed matchups are removed from the active tournament pages. The winning story is kept in the canon archive.</p><Link href="/archive" className="button secondary">View canon archive</Link><p><Link href="/matches">Back to active matchups</Link></p></main>;
 
   return (
     <main className="shell page">
