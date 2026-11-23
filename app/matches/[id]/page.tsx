@@ -20,6 +20,7 @@ export default function MatchPage() {
   const [match, setMatch] = useState<any>(null);
   const [user, setUser] = useState<any>(null);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
   const [story, setStory] = useState("");
   const [character, setCharacter] = useState("");
   const [myMatchCharacters, setMyMatchCharacters] = useState<Character[]>([]);
@@ -60,6 +61,9 @@ export default function MatchPage() {
       });
       setUser(currentUser);
       setSubmissions((submissionData || []) as Submission[]);
+      const { data: counts, error: countError } = await supabase.rpc("get_match_vote_counts", { p_match_id: id });
+      if (countError) throw countError;
+      setVoteCounts(Object.fromEntries((counts || []).map((row: any) => [row.submission_id, Number(row.vote_count)])));
       setMyMatchCharacters((ownedResult.data || []) as Character[]);
       setCharacter("");
     } catch (error) {
@@ -71,6 +75,8 @@ export default function MatchPage() {
 
   useEffect(() => {
     load();
+    const refresh = window.setInterval(() => { load(); }, 15000);
+    return () => window.clearInterval(refresh);
     // `id` identifies the matchup being viewed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -106,14 +112,15 @@ export default function MatchPage() {
 
   if (loading && !match) return <main className="shell page"><p>{message}</p></main>;
   if (!match) return <main className="shell page"><p className="notice">{message || "Matchup not found."}</p><Link href="/matches">Back to matchups</Link></main>;
-  if (!["scheduled", "open", "writing", "voting"].includes(match.status)) return <main className="shell page"><p className="eyebrow">THE ARENA</p><h1>This matchup is no longer active</h1><p className="muted">Closed and completed matchups are removed from the active tournament pages. The winning story is kept in the canon archive.</p><Link href="/archive" className="button secondary">View canon archive</Link><p><Link href="/matches">Back to active matchups</Link></p></main>;
+  if (match.status === "closed") return <main className="shell page"><p className="eyebrow">MATCH RESULT</p><h1>{match.a_name} <em>vs.</em> {match.b_name}</h1><section className="panel"><p className="eyebrow">MATCH COMPLETE</p><h2>{match.winner_character_id === match.character_a_id ? match.a_name : match.b_name} wins!</h2><p className="muted">{match.result_method === "coin_flip" ? "Both writers submitted, but nobody voted. The winner was determined by a 50/50 coin flip." : match.result_method === "single_submission" ? "Only one writer submitted a story, so that character won automatically." : "The result was decided by public vote."}</p><Link href="/archive" className="button secondary">Read the canon story</Link></section><p><Link href="/matches">Back to active matchups</Link></p></main>;
+  if (!["scheduled", "open", "writing", "voting"].includes(match.status)) return <main className="shell page"><p className="eyebrow">THE ARENA</p><h1>This matchup is no longer active</h1><p className="muted">This matchup is no longer active.</p><Link href="/matches">Back to active matchups</Link></main>;
 
   return (
     <main className="shell page">
       <Link href="/matches" className="back">← All matchups</Link>
       <p className="eyebrow">MATCHUP</p>
       <h1>{match.a_name || "Character A"} <em>vs.</em> {match.b_name || "Character B"}</h1>
-      <p className="muted">Stage: {match.bracket_stage || "Tournament"} · Status: {match.status}</p>
+      <p className="muted">Stage: {match.bracket_stage || "Tournament"} · Status: {match.status}. This page refreshes automatically while the match is active.</p>
       {match.status === "closed" && <section className="panel"><h2>Match closed</h2><p><strong>{match.winner_character_id === match.character_a_id ? match.a_name : match.b_name}</strong> won this matchup.</p><p className="muted tiny">{match.result_method === "coin_flip" ? "Both writers submitted and no votes were cast. The winner was selected by a 50/50 coin flip." : match.result_method === "single_submission" ? "Automatic win: only one writer submitted a story." : "The result was decided by public vote."}</p><Link href="/archive">View the canon archive</Link></section>}
 
       <section className="panel">
@@ -158,6 +165,7 @@ export default function MatchPage() {
         {submissions.length ? submissions.map((item) => (
           <article className="panel" key={item.id}>
             <p className="muted tiny">Submitted {new Date(item.created_at).toLocaleString()}</p>
+            <p className="muted tiny">Current votes: <strong>{voteCounts[item.id] ?? 0}</strong></p>
             <p className="story">{item.content}</p>
           </article>
         )) : <p className="muted">No stories have been submitted yet.</p>}
